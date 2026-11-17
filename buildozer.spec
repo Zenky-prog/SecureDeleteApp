@@ -9,3 +9,5 @@ orientation = portrait
 android.permissions = WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
 android.api = 31
 android.minapi = 21
+# (str) Source file include (let empty to include all files)
+source.dir = .

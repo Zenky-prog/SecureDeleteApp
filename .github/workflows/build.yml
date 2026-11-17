@@ -1,4 +1,4 @@
-name: Dockerized Buildozer
+name: Buildozer Local Docker Step
 
 on:
   push:
@@ -8,23 +8,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    
-    container:
-      image: kivy/buildozer:latest
+    # تم إزالة سطر "container:" من هنا لتجنب مشاكل الصلاحيات تماماً
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Fix Ownership and Git Safe Directory
+    - name: Build APK using Buildozer Docker
       run: |
-        # حل مشكلة صلاحيات المجلدات داخل حاوية دوكر
-        chown -R root:root /__w/
-        git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
-
-    - name: Build with Buildozer
-      run: |
-        buildozer -v android debug
+        # تشغيل حاوية دوكر مؤقتة كأمر منفصل لتنفيذ البناء بسلاح الصلاحيات الكاملة
+        docker run --rm \
+          -v ${{ github.workspace }}:/home/user/hostworkspace \
+          -w /home/user/hostworkspace \
+          kivy/buildozer:latest \
+          buildozer -v android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4

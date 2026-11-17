@@ -1,4 +1,4 @@
-name: Buildozer Local Docker Step
+name: Sustainable Direct Buildozer
 
 on:
   push:
@@ -13,15 +13,41 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Build APK using Buildozer Docker
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    # التخزين المؤقت لمجلد البناء لتوفير الوقت في المرات القادمة
+    - name: Cache Buildozer global directory
+      uses: actions/cache@v4
+      with:
+        path: |
+          .buildozer/
+          bin/
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+
+    - name: Install system dependencies
       run: |
-        # استخدام echo "y" للإجابة تلقائياً على سؤال الاستمرار بصلاحيات الـ root
-        echo "y" | docker run --rm \
-          -e BUILDOZER_ALLOW_ROOT=1 \
-          -v ${{ github.workspace }}:/home/user/hostworkspace \
-          -w /home/user/hostworkspace \
-          kivy/buildozer:latest \
-          buildozer -v android debug
+        sudo apt-get update
+        sudo apt-get install -y \
+            git zip unzip openjdk-17-jdk \
+            python3-pip python3-dev \
+            build-essential ccache \
+            libffi-dev libssl-dev \
+            zlib1g-dev libncurses5-dev \
+            libncursesw5-dev libtinfo5
+
+    - name: Install Buildozer and Cython
+      run: |
+        pip install --upgrade pip
+        pip install cython==0.29.36 buildozer
+
+    - name: Build with Buildozer
+      run: |
+        buildozer -v android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4

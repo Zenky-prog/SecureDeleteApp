@@ -15,5 +15,9 @@ android.min_api = 21
 
 # (str) Android SDK version (Optional)
 android.sdk=33
+    - name: Accept Android Licenses
+      run: |
+        yes | sdkmanager --licenses || true
+
 # (str) Source file include (let empty to include all files)
 source.dir = .

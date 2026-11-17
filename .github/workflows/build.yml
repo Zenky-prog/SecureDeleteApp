@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    # تم إزالة سطر "container:" من هنا لتجنب مشاكل الصلاحيات تماماً
 
     steps:
     - name: Checkout Code
@@ -16,8 +15,8 @@ jobs:
 
     - name: Build APK using Buildozer Docker
       run: |
-        # تشغيل حاوية دوكر مؤقتة كأمر منفصل لتنفيذ البناء بسلاح الصلاحيات الكاملة
         docker run --rm \
+          -e BUILDOZER_ALLOW_ROOT=1 \
           -v ${{ github.workspace }}:/home/user/hostworkspace \
           -w /home/user/hostworkspace \
           kivy/buildozer:latest \

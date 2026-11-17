@@ -9,7 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     
-    # هنا يتم تحديد صورة الدوكر الجاهزة التي تحتوي على البيئة البرمجية المستدامة بعيداً عن التطبيق
     container:
       image: kivy/buildozer:latest
 
@@ -17,9 +16,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Fix git safe directory (ضروري لصلاحيات الدوكر)
+    - name: Fix Ownership and Git Safe Directory
       run: |
-        git config --global --add safe.directory /__w/$(echo ${{ github.repository }} | cut -d'/' -f2)/$(echo ${{ github.repository }} | cut -d'/' -f2)
+        # حل مشكلة صلاحيات المجلدات داخل حاوية دوكر
+        chown -R root:root /__w/
+        git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
 
     - name: Build with Buildozer
       run: |

@@ -46,6 +46,11 @@ jobs:
 
     - name: Build with Buildozer
       run: |
+        # حقن ملفات التراخيص مسبقاً لتخطي أي توقف تفاعلي خاص برخص أندرويد
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n24333f8a43b682421c57bc13354c2f80d2d3d9d2" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        
         buildozer -v android debug
 
     - name: Upload APK Artifact
